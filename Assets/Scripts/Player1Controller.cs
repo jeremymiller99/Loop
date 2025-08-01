@@ -8,6 +8,7 @@ public class Player1Controller : MonoBehaviour
     
     private Rigidbody2D rb;
     private bool isGrounded;
+    private bool isActivePlayer = true; // Controls whether this player responds to input
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -18,6 +19,9 @@ public class Player1Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Only handle input if this is the active player
+        if (!isActivePlayer) return;
+        
         // Handle horizontal movement
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         
@@ -55,4 +59,13 @@ public class Player1Controller : MonoBehaviour
     {
         isGrounded = grounded;
     }
+    
+    // Method to set whether this player is active
+    public void SetActive(bool active)
+    {
+        isActivePlayer = active;
+    }
+    
+    // Property to check if this player is active
+    public bool IsActive => isActivePlayer;
 }

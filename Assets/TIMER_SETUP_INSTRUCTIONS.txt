@@ -1,0 +1,51 @@
+COUNTDOWN TIMER SETUP INSTRUCTIONS
+===================================
+
+Your countdown timer system has been implemented! Here's how to set it up:
+
+AUTOMATIC SETUP (Recommended):
+1. Open your scene in Unity
+2. Create an empty GameObject and name it "Timer UI Manager"
+3. Add the TimerUI script to this GameObject
+4. In the Inspector, right-click on the TimerUI script header
+5. Select "Create Timer UI Canvas" from the context menu
+6. This will automatically create a Canvas with Timer and Phase text
+
+MANUAL SETUP:
+1. Create a Canvas in your scene (UI > Canvas)
+2. Create two Text objects as children of the Canvas:
+   - "Timer Text" for countdown display  
+   - "Phase Text" for current phase info (optional)
+3. Position them at the top of the screen
+4. In your PlayerManager component:
+   - Drag the Timer Text into the "Timer Text" field
+5. Configure timer settings in PlayerManager:
+   - Phase Timer Duration: 30 seconds (default)
+   - Enable Timer: checked
+
+CONFIGURATION OPTIONS:
+- phaseTimerDuration: How long each phase lasts (default: 30 seconds)
+- enableTimer: Toggle to turn timer on/off for testing
+- timerText: Reference to UI Text component for countdown display
+
+FEATURES:
+✓ Countdown timer for each phase (Player 1 and Player 2 phases)
+✓ Timer resets when phases restart
+✓ Both players "die" if time runs out
+✓ Timer display turns red in last 10 seconds
+✓ Shows "TIME'S UP!" message when expired
+✓ Automatic level restart after timeout
+✓ Timer stops when phase completes successfully
+
+HOW IT WORKS:
+- Phase 1: Player 1 has X seconds to reach the goal
+- Phase 2: Player 2 has X seconds to shoot Player 1  
+- If time runs out in either phase, both players fail and level restarts
+- Timer pauses when phases complete and resets for new phases
+
+TESTING:
+- Press 'R' to restart the level manually
+- Timer duration can be adjusted in PlayerManager inspector
+- Disable timer completely by unchecking "Enable Timer"
+
+The system integrates seamlessly with your existing game flow!
