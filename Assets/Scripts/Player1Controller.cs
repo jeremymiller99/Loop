@@ -68,4 +68,7 @@ public class Player1Controller : MonoBehaviour
     
     // Property to check if this player is active
     public bool IsActive => isActivePlayer;
+    
+    // Property to check if this player is grounded (useful for recording system)
+    public bool IsGrounded => isGrounded;
 }

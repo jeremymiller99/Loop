@@ -1,7 +1,7 @@
-COUNTDOWN TIMER SETUP INSTRUCTIONS
-===================================
+ENHANCED UI SYSTEM SETUP INSTRUCTIONS
+=====================================
 
-Your countdown timer system has been implemented! Here's how to set it up:
+Your enhanced UI system with timer, loop tracking, and game flow feedback has been implemented! Here's how to set it up:
 
 AUTOMATIC SETUP (Recommended):
 1. Open your scene in Unity
@@ -9,16 +9,25 @@ AUTOMATIC SETUP (Recommended):
 3. Add the TimerUI script to this GameObject
 4. In the Inspector, right-click on the TimerUI script header
 5. Select "Create Timer UI Canvas" from the context menu
-6. This will automatically create a Canvas with Timer and Phase text
+6. This will automatically create a complete UI system with:
+   - Timer display (top center)
+   - Phase information text
+   - Loop counter ("X/Y Loops")
+   - Animated "Loop Complete!" popup (center screen)
+   - Level completion panel with run statistics
 
 MANUAL SETUP:
 1. Create a Canvas in your scene (UI > Canvas)
-2. Create two Text objects as children of the Canvas:
-   - "Timer Text" for countdown display  
-   - "Phase Text" for current phase info (optional)
-3. Position them at the top of the screen
-4. In your PlayerManager component:
-   - Drag the Timer Text into the "Timer Text" field
+2. Create the following UI elements as children of the Canvas:
+   - "Timer Text" for countdown display (top center)
+   - "Phase Text" for current phase info (below timer)
+   - "Loop Counter Text" for loop progress (below phase text)
+   - "Loop Complete Popup" for animated feedback (center screen, initially hidden)
+   - "Level Complete Panel" with background and details text (full screen overlay, initially hidden)
+   - "Close Button" inside the level complete panel
+3. Position them appropriately on screen
+4. In the TimerUI component:
+   - Drag all UI elements into their respective fields
 5. Configure timer settings in PlayerManager:
    - Phase Timer Duration: 30 seconds (default)
    - Enable Timer: checked
@@ -36,12 +45,31 @@ FEATURES:
 ✓ Shows "TIME'S UP!" message when expired
 ✓ Automatic level restart after timeout
 ✓ Timer stops when phase completes successfully
+✓ Loop counter showing progress ("X/Y Loops")
+✓ Animated "Loop Complete!" popup with bounce effect
+✓ Level completion panel with detailed run statistics:
+  - Total play time
+  - Loops completed
+  - Average time per loop
+✓ Dismissible completion panel with close button
+✓ Total play time tracking across all loops
+✓ Event-driven UI updates for responsive feedback
 
 HOW IT WORKS:
 - Phase 1: Player 1 has X seconds to reach the goal
 - Phase 2: Player 2 has X seconds to shoot Player 1  
 - If time runs out in either phase, both players fail and level restarts
 - Timer pauses when phases complete and resets for new phases
+- When a loop completes successfully:
+  1. Animated "LOOP COMPLETE!" popup appears in center
+  2. Loop counter updates (e.g., "1/1 Loops")
+  3. If more loops needed, next loop starts automatically
+  4. If all loops done, level completion panel shows with stats
+- Level completion panel displays:
+  - Total time spent
+  - Number of loops completed
+  - Average time per loop
+- Player can close the completion panel and continue playing
 
 TESTING:
 - Press 'R' to restart the level manually

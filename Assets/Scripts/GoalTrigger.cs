@@ -7,8 +7,7 @@ public class GoalTrigger : MonoBehaviour
     [SerializeField] private string playerTag = "Player";
     [SerializeField] private bool onlyPlayer1CanTrigger = true;
     
-    // Event that PlayerManager will subscribe to
-    public event Action OnGoalReached;
+    // Note: Now using centralized GameEvents system instead of individual events
     
     private bool goalTriggered = false;
     
@@ -40,16 +39,29 @@ public class GoalTrigger : MonoBehaviour
             Player1Controller player1 = other.GetComponent<Player1Controller>();
             if (player1 == null) return;
             
-            // Also check if Player 1 is actually active (in case both players are present)
-            if (!player1.IsActive) return;
+            // Only trigger for active Player 1 (Phase 1)
+            // In Phase 2, Player 1 replay completion is handled by MovementReplayer
+            if (player1.IsActive)
+            {
+                // Phase 1: Player 1 is actively controlled and reached goal
+                goalTriggered = true;
+                Debug.Log($"Goal reached by active Player 1 in Phase 1!");
+                
+                // Trigger event - much more efficient than FindFirstObjectByType
+                GameEvents.TriggerPlayer1ReachedGoal();
+            }
+            // Note: Phase 2 goal detection is now handled by MovementReplayer.HandlePlayer1ReplayComplete()
+            // when the Player 1 recording finishes, which is more reliable than trigger detection
         }
-        
-        // Goal reached!
-        goalTriggered = true;
-        Debug.Log($"Goal reached by {other.name}!");
-        
-        // Notify subscribers (PlayerManager)
-        OnGoalReached?.Invoke();
+        else
+        {
+            // General case - any player can trigger
+            goalTriggered = true;
+            Debug.Log($"Goal reached by {other.name}!");
+            
+            // Trigger generic goal event
+            GameEvents.TriggerPlayer1ReachedGoal();
+        }
     }
     
     // Method to reset the goal (useful when restarting phases)

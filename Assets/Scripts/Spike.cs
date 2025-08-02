@@ -5,38 +5,28 @@ public class Spike : MonoBehaviour
     [Header("Spike Settings")]
     [SerializeField] private string playerTag = "Player";
     
-    private PlayerManager playerManager;
-    
-    void Start()
-    {
-        // Find the PlayerManager in the scene
-        playerManager = FindFirstObjectByType<PlayerManager>();
-        if (playerManager == null)
-        {
-            Debug.LogWarning("Spike: Could not find PlayerManager in scene!");
-        }
-    }
-    
     private void OnTriggerEnter2D(Collider2D other)
     {
         // Check if the colliding object is a player
         if (other.CompareTag(playerTag))
         {
-            // Only reset if it's the currently active player
-            GameObject activePlayer = playerManager != null ? playerManager.GetActivePlayer() : null;
-            if (activePlayer != null && other.gameObject == activePlayer)
+            // Check which player hit the spike and trigger appropriate event
+            Player1Controller player1 = other.GetComponent<Player1Controller>();
+            Player2Controller player2 = other.GetComponent<Player2Controller>();
+            
+            if (player1 != null && player1.IsActive)
             {
-                Debug.Log($"Active player {other.name} hit spike! Resetting current phase...");
-                ResetCurrentPhase();
+                // Phase 1: Active Player 1 hit spike
+                Debug.Log($"Player 1 hit spike! Triggering death event...");
+                GameEvents.TriggerPlayer1Died();
             }
+            else if (player2 != null && player2.IsActive)
+            {
+                // Phase 2: Active Player 2 hit spike
+                Debug.Log($"Player 2 hit spike! Triggering death event...");
+                GameEvents.TriggerPlayer2Died();
+            }
+            // Ghost players (inactive/replaying) ignore spikes - they're not really "there"
         }
-    }
-    
-    private void ResetCurrentPhase()
-    {
-        if (playerManager == null) return;
-        
-        // Tell PlayerManager to restart the current phase (reset positions, etc.)
-        playerManager.RestartCurrentPhase();
     }
 }

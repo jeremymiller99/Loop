@@ -8,7 +8,7 @@ public class Player2Controller : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab; // Bullet prefab to instantiate
     [SerializeField] private Transform firePoint; // Point where bullets spawn
     [SerializeField] private Transform gun; // Gun transform that rotates towards mouse
-    [SerializeField] private float fireRate = 0.3f; // Time between shots
+    [SerializeField] private float fireRate = 0.3f; // Time between shots (automatic fire)
     [SerializeField] private float gunDistance = 0.8f; // Distance gun orbits around player
     
     private Rigidbody2D rb;
@@ -76,8 +76,8 @@ public class Player2Controller : MonoBehaviour
             FaceMouseDirection();
         }
         
-        // Handle shooting with mouse click
-        if (Input.GetMouseButtonDown(0) && Time.time >= nextFireTime)
+        // Handle automatic shooting with mouse hold
+        if (Input.GetMouseButton(0) && Time.time >= nextFireTime)
         {
             Shoot();
             nextFireTime = Time.time + fireRate;
@@ -103,6 +103,12 @@ public class Player2Controller : MonoBehaviour
     
     // Property to check if this player is active
     public bool IsActive => isActivePlayer;
+    
+    // Property to check if this player is grounded (useful for recording system)
+    public bool IsGrounded => isGrounded;
+    
+    // Property to check facing direction (useful for recording system)
+    public bool IsFacingRight => facingRight;
     
     private void Flip()
     {
@@ -207,6 +213,34 @@ public class Player2Controller : MonoBehaviour
         {
             bulletScript.SetDirection(shootDirection, gameObject);
             Debug.Log($"Bullet direction set successfully");
+        }
+        else
+        {
+            Debug.LogError("Bullet prefab doesn't have Bullet script attached!");
+        }
+    }
+    
+    // Public method for replay system to simulate shooting at a specific position
+    public void SimulateShoot(Vector3 targetWorldPosition)
+    {
+        if (bulletPrefab == null || firePoint == null)
+        {
+            Debug.LogWarning("Cannot simulate shoot - bullet prefab or fire point not set!");
+            return;
+        }
+        
+        // Create bullet at fire point
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        
+        // Calculate shoot direction towards target position
+        Vector2 shootDirection = (targetWorldPosition - transform.position).normalized;
+        
+        // Get bullet component and set its direction
+        Bullet bulletScript = bullet.GetComponent<Bullet>();
+        if (bulletScript != null)
+        {
+            bulletScript.SetDirection(shootDirection, gameObject);
+            Debug.Log($"Simulated shot towards {targetWorldPosition} from {gameObject.name}");
         }
         else
         {

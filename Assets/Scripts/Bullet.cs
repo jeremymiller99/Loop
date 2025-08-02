@@ -106,16 +106,8 @@ public class Bullet : MonoBehaviour
             {
                 Debug.Log("Player 1 was shot! Player 2 wins!");
                 
-                // Find the PlayerManager and notify it of Player 2's victory
-                PlayerManager playerManager = FindFirstObjectByType<PlayerManager>();
-                if (playerManager != null)
-                {
-                    playerManager.HandlePlayer2Victory();
-                }
-                else
-                {
-                    Debug.LogWarning("Could not find PlayerManager to report Player 2 victory!");
-                }
+                // Trigger event - much more efficient than FindFirstObjectByType
+                GameEvents.TriggerPlayer2Victory();
             }
         }
         
@@ -146,16 +138,8 @@ public class Bullet : MonoBehaviour
             {
                 Debug.Log("Player 1 was shot! Player 2 wins!");
                 
-                // Find the PlayerManager and notify it of Player 2's victory
-                PlayerManager playerManager = FindFirstObjectByType<PlayerManager>();
-                if (playerManager != null)
-                {
-                    playerManager.HandlePlayer2Victory();
-                }
-                else
-                {
-                    Debug.LogWarning("Could not find PlayerManager to report Player 2 victory!");
-                }
+                // Trigger event - much more efficient than FindFirstObjectByType
+                GameEvents.TriggerPlayer2Victory();
             }
         }
         
