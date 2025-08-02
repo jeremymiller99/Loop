@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 7483859671814654712}
   - component: {fileID: 259304485879042955}
   - component: {fileID: 6823608599104907130}
+  - component: {fileID: 267476443035551848}
+  - component: {fileID: 345559789580308844}
   m_Layer: 0
   m_Name: Player1
   m_TagString: Player
@@ -179,6 +181,33 @@ MonoBehaviour:
   moveSpeed: 12
   jumpForce: 20
   airControl: 0.7
+--- !u!114 &267476443035551848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861781448584523441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9090e77d0c77b9448c0b030ca4d72fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  recordingFrameRate: 60
+--- !u!114 &345559789580308844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861781448584523441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f11940dc118dec74d87f005687b1e30e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  smoothTransitions: 1
+  positionLerpSpeed: 10
 --- !u!1 &7044147991499387134
 GameObject:
   m_ObjectHideFlags: 0
