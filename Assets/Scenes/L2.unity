@@ -769,15 +769,9 @@ MonoBehaviour:
   player1: {fileID: 1694110479600564175}
   player2: {fileID: 763887724}
   goalTrigger: {fileID: 860123114}
-  player1Recorder: {fileID: 0}
-  player2Recorder: {fileID: 0}
-  player1Replayer: {fileID: 0}
-  player2Replayer: {fileID: 0}
   phaseTimerDuration: 10
   timerText: {fileID: 1015872864}
   enableTimer: 1
-  requiredLoopsToComplete: 1
-  debugMode: 0
 --- !u!4 &625679686
 Transform:
   m_ObjectHideFlags: 0
@@ -1436,7 +1430,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.828, y: -6.544, z: 0}
-  m_LocalScale: {x: 0.5, y: 3, z: 1}
+  m_LocalScale: {x: 0.5, y: 3.689051, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1472,16 +1466,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timerText: {fileID: 1015872864}
   phaseText: {fileID: 9726850}
-  loopCounterText: {fileID: 0}
-  loopCompletePopupText: {fileID: 0}
-  levelCompletePanel: {fileID: 0}
-  levelCompleteDetailsText: {fileID: 0}
-  levelCompleteCloseButton: {fileID: 0}
   fontSize: 36
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   warningColor: {r: 1, g: 0, b: 0, a: 1}
-  loopCompleteColor: {r: 0, g: 1, b: 0, a: 1}
-  popupAnimationDuration: 2
 --- !u!4 &1724871275
 Transform:
   m_ObjectHideFlags: 0
