@@ -583,6 +583,58 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &367097344
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 367097346}
+  - component: {fileID: 367097345}
+  m_Layer: 0
+  m_Name: DeathParticleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &367097345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 367097344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d611895a6a39df5498b8c3338065e89c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deathParticles: {fileID: 0}
+  particleMaterial: {fileID: 0}
+  whiteTexture: {fileID: 0}
+  particleCount: 50
+  explosionForce: 8
+  particleLifetime: 1.5
+  particleSize: 0.1
+  particleSizeVariation: 0.05
+--- !u!4 &367097346
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 367097344}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.76607, y: -3.89528, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &396146687
 GameObject:
   m_ObjectHideFlags: 0
@@ -616,7 +668,7 @@ MonoBehaviour:
   timerText: {fileID: 134863280}
   fontSize: 36
   normalColor: {r: 1, g: 1, b: 1, a: 1}
-  warningColor: {r: 1, g: 0, b: 0, a: 1}
+  warningColor: {r: 1, g: 1, b: 1, a: 1}
   warningThreshold: 10
 --- !u!4 &396146689
 Transform:
@@ -1165,8 +1217,8 @@ MonoBehaviour:
   phaseText: {fileID: 1085975345}
   fontSize: 30
   normalColor: {r: 1, g: 1, b: 1, a: 1}
-  player1Color: {r: 0.3, g: 0.8, b: 1, a: 1}
-  player2Color: {r: 1, g: 0.6, b: 0.3, a: 1}
+  player1Color: {r: 1, g: 1, b: 1, a: 1}
+  player2Color: {r: 1, g: 1, b: 1, a: 1}
   player1Message: Reach the Goal!
   player2Message: Go Get Em!
   levelCompleteMessage: Level Complete!
@@ -1784,3 +1836,4 @@ SceneRoots:
   - {fileID: 396146689}
   - {fileID: 906760239}
   - {fileID: 1635239880}
+  - {fileID: 367097346}

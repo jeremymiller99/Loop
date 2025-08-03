@@ -786,7 +786,7 @@ MonoBehaviour:
   timerText: {fileID: 702291808}
   fontSize: 36
   normalColor: {r: 1, g: 1, b: 1, a: 1}
-  warningColor: {r: 1, g: 0, b: 0, a: 1}
+  warningColor: {r: 1, g: 1, b: 1, a: 1}
   warningThreshold: 10
 --- !u!4 &396146689
 Transform:
@@ -1098,8 +1098,8 @@ MonoBehaviour:
   phaseText: {fileID: 1339945476}
   fontSize: 30
   normalColor: {r: 1, g: 1, b: 1, a: 1}
-  player1Color: {r: 0.3, g: 0.8, b: 1, a: 1}
-  player2Color: {r: 1, g: 0.6, b: 0.3, a: 1}
+  player1Color: {r: 1, g: 1, b: 1, a: 1}
+  player2Color: {r: 1, g: 1, b: 1, a: 1}
   player1Message: Reach the Goal!
   player2Message: Go Get Em!
   levelCompleteMessage: Level Complete!
@@ -3310,6 +3310,58 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 808063013976414831, guid: 179d1fd1be66c2446ac445d4c49c3078, type: 3}
   m_PrefabInstance: {fileID: 1459465827}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1471240856
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1471240858}
+  - component: {fileID: 1471240857}
+  m_Layer: 0
+  m_Name: DeathParticleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1471240857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1471240856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d611895a6a39df5498b8c3338065e89c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deathParticles: {fileID: 0}
+  particleMaterial: {fileID: 0}
+  whiteTexture: {fileID: 0}
+  particleCount: 50
+  explosionForce: 8
+  particleLifetime: 1.5
+  particleSize: 0.1
+  particleSizeVariation: 0.05
+--- !u!4 &1471240858
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1471240856}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.76607, y: -3.89528, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1484558117
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4769,3 +4821,4 @@ SceneRoots:
   - {fileID: 1661849470}
   - {fileID: 706716295}
   - {fileID: 612796112}
+  - {fileID: 1471240858}

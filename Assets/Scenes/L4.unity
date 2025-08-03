@@ -691,7 +691,7 @@ MonoBehaviour:
   timerText: {fileID: 1955273939}
   fontSize: 36
   normalColor: {r: 1, g: 1, b: 1, a: 1}
-  warningColor: {r: 1, g: 0, b: 0, a: 1}
+  warningColor: {r: 1, g: 1, b: 1, a: 1}
   warningThreshold: 10
 --- !u!4 &396146689
 Transform:
@@ -720,7 +720,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 990833eca78532a4095eaee96ea2e996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phaseTimerDuration: 30
+  phaseTimerDuration: 6
   enableTimer: 1
   debugMode: 0
 --- !u!1001 &469683964
@@ -921,8 +921,8 @@ MonoBehaviour:
   phaseText: {fileID: 1000481962}
   fontSize: 30
   normalColor: {r: 1, g: 1, b: 1, a: 1}
-  player1Color: {r: 0.3, g: 0.8, b: 1, a: 1}
-  player2Color: {r: 1, g: 0.6, b: 0.3, a: 1}
+  player1Color: {r: 1, g: 1, b: 1, a: 1}
+  player2Color: {r: 1, g: 1, b: 1, a: 1}
   player1Message: Reach the Goal!
   player2Message: Go Get Em!
   levelCompleteMessage: Level Complete!
