@@ -18,10 +18,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private GoalTrigger goalTrigger;
     
     [Header("Movement Recording Components")]
-    [SerializeField] private MovementRecorder player1Recorder;
-    [SerializeField] private MovementRecorder player2Recorder;
-    [SerializeField] private MovementReplayer player1Replayer;
-    [SerializeField] private MovementReplayer player2Replayer;
+    [SerializeField] private MovementRecorder player1Recorder;     // only record P1
+    [SerializeField] private MovementReplayer  player1Replayer;    // replay needed only for P1
     
     [Header("Timer Settings")]
     [SerializeField] private float phaseTimerDuration = 30f; // 30 seconds per phase
@@ -42,7 +40,6 @@ public class PlayerManager : MonoBehaviour
     
     // Movement recording variables
     private MovementRecording player1LastRecording;
-    private MovementRecording player2LastRecording;
     
     // Loop tracking variables
     private int completedLoops = 0; // How many complete loops (Phase 1 + Phase 2) have been finished
@@ -101,22 +98,9 @@ public class PlayerManager : MonoBehaviour
         if (player1 != null)
             player1.SetActive(true);
         
-        // Player 2 setup - either inactive (first Phase 1) or replaying previous recording
+        // Player 2 setup - now just deactivate it during Phase 1
         if (player2 != null)
-        {
             player2.SetActive(false);
-            
-            // If we have a recording from a previous loop's Player 2 phase, replay it
-            if (!isFirstPhase1 && player2LastRecording != null && player2Replayer != null)
-            {
-                Debug.Log("Starting Player 2 replay from previous loop");
-                player2Replayer.StartReplay(player2LastRecording);
-            }
-            else if (player2Replayer != null)
-            {
-                player2Replayer.StopReplay();
-            }
-        }
         
         // Start recording Player 1's movements
         if (player1Recorder != null)
@@ -178,11 +162,7 @@ public class PlayerManager : MonoBehaviour
             }
         }
         
-        // Start recording Player 2's movements
-        if (player2Recorder != null)
-        {
-            player2Recorder.StartRecording();
-        }
+        // No longer need to record Player 2's movements
         
         // Start the timer for this phase
         StartTimer();
@@ -247,12 +227,7 @@ public class PlayerManager : MonoBehaviour
         Debug.Log("Player 2 shot Player 1! Loop completed.");
         StopTimer(); // Stop the timer when phase ends
         
-        // Stop recording Player 2's movements and save the recording
-        if (player2Recorder != null)
-        {
-            player2Recorder.StopRecording();
-            player2LastRecording = player2Recorder.GetCompletedRecording();
-        }
+        // No longer need to record Player 2's movements
         
         // Stop Player 1's replay immediately
         if (player1Replayer != null)
@@ -436,10 +411,6 @@ public class PlayerManager : MonoBehaviour
         {
             player1Recorder.StopRecording();
         }
-        if (player2Replayer != null)
-        {
-            player2Replayer.StopReplay();
-        }
         
         // Restart Phase 1 with same conditions
         StartPlayer1Phase();
@@ -454,10 +425,6 @@ public class PlayerManager : MonoBehaviour
         }
         
         // Stop any active recordings/replays
-        if (player2Recorder != null)
-        {
-            player2Recorder.StopRecording();
-        }
         if (player1Replayer != null)
         {
             player1Replayer.StopReplay();
@@ -484,17 +451,9 @@ public class PlayerManager : MonoBehaviour
         {
             player1Recorder.StopRecording();
         }
-        if (player2Recorder != null)
-        {
-            player2Recorder.StopRecording();
-        }
         if (player1Replayer != null)
         {
             player1Replayer.StopReplay();
-        }
-        if (player2Replayer != null)
-        {
-            player2Replayer.StopReplay();
         }
         
         // Deactivate players
@@ -648,13 +607,7 @@ public class PlayerManager : MonoBehaviour
                 player1Replayer = player1.GetComponent<MovementReplayer>();
         }
         
-        if (player2 != null)
-        {
-            if (player2Recorder == null)
-                player2Recorder = player2.GetComponent<MovementRecorder>();
-            if (player2Replayer == null)
-                player2Replayer = player2.GetComponent<MovementReplayer>();
-        }
+        // No longer need Player 2 recorder
         
         // Log warnings if components are missing
         if (player1 != null && (player1Recorder == null || player1Replayer == null))
@@ -662,10 +615,7 @@ public class PlayerManager : MonoBehaviour
             Debug.LogWarning("Player 1 is missing MovementRecorder or MovementReplayer components!");
         }
         
-        if (player2 != null && (player2Recorder == null || player2Replayer == null))
-        {
-            Debug.LogWarning("Player 2 is missing MovementRecorder or MovementReplayer components!");
-        }
+        // No longer need Player 2 recorder component
     }
     
     // Public method to get current loop count (useful for UI or debugging)
@@ -702,29 +652,13 @@ public class PlayerManager : MonoBehaviour
     // Public method to get the active recorder (useful for debugging)
     public MovementRecorder GetActiveRecorder()
     {
-        switch (currentPhase)
-        {
-            case GamePhase.Player1Phase:
-                return player1Recorder;
-            case GamePhase.Player2Phase:
-                return player2Recorder;
-            default:
-                return null;
-        }
+        return currentPhase == GamePhase.Player1Phase ? player1Recorder : null;
     }
     
     // Public method to get the active replayer (useful for debugging)
     public MovementReplayer GetActiveReplayer()
     {
-        switch (currentPhase)
-        {
-            case GamePhase.Player1Phase:
-                return player2Replayer; // Player 2 replays during Player 1's turn
-            case GamePhase.Player2Phase:
-                return player1Replayer; // Player 1 replays during Player 2's turn
-            default:
-                return null;
-        }
+        return currentPhase == GamePhase.Player2Phase ? player1Replayer : null;
     }
     
     #endregion

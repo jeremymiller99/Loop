@@ -13,12 +13,8 @@ public class MovementReplayer : MonoBehaviour
     // Component references
     private Rigidbody2D rb;
     private Player1Controller player1Controller;
-    private Player2Controller player2Controller;
-    private Camera playerCamera;
     
-    // Player type detection
-    private bool isPlayer1;
-    private bool isPlayer2;
+    // This replayer is now only used for Player 1
     
     // Replay state
     private MovementFrame currentFrame;
@@ -31,21 +27,9 @@ public class MovementReplayer : MonoBehaviour
         // Get component references early to ensure they're available
         rb = GetComponent<Rigidbody2D>();
         player1Controller = GetComponent<Player1Controller>();
-        player2Controller = GetComponent<Player2Controller>();
-        
-        // Determine player type
-        isPlayer1 = player1Controller != null;
-        isPlayer2 = player2Controller != null;
     }
     
-    void Start()
-    {
-        // Get camera references in Start (after scene is fully loaded)
-        playerCamera = Camera.main;
-        
-        if (playerCamera == null)
-            playerCamera = FindFirstObjectByType<Camera>();
-    }
+    // Start method removed - no longer needed since we don't handle Player 2 shooting
 
     void Update()
     {
@@ -74,9 +58,9 @@ public class MovementReplayer : MonoBehaviour
                     ApplyFinalFrame(currentFrame);
                 }
                 
-                // If this is Player 1's replay finishing during Phase 2, it means Player 1 reached the goal
+                // Player 1's replay finishing during Phase 2 means Player 1 reached the goal
                 // (since the recording only ended because Player 1 successfully reached the goal in Phase 1)
-                if (isPlayer1 && !hasNotifiedCompletion)
+                if (!hasNotifiedCompletion)
                 {
                     hasNotifiedCompletion = true;
                     HandlePlayer1ReplayComplete();
@@ -119,13 +103,9 @@ public class MovementReplayer : MonoBehaviour
         }
         
         // Disable player input during replay
-        if (isPlayer1 && player1Controller != null)
+        if (player1Controller != null)
         {
             player1Controller.SetActive(false);
-        }
-        else if (isPlayer2 && player2Controller != null)
-        {
-            player2Controller.SetActive(false);
         }
         
         Debug.Log($"Started replaying movements for {gameObject.name}. Duration: {recording.duration:F2}s, Frames: {recording.frames.Count}");
@@ -156,17 +136,8 @@ public class MovementReplayer : MonoBehaviour
             transform.position = frame.position;
         }
         
-        // Apply facing direction for Player 2
-        if (isPlayer2)
-        {
-            ApplyFacingDirection(frame.facingRight);
-            
-            // Apply shooting if this frame has shooting input
-            if (frame.shootInput)
-            {
-                SimulateShoot(frame.mousePosition);
-            }
-        }
+        // Note: Player 2 specific logic (facing direction, shooting) removed
+        // since this replayer is now only used for Player 1
     }
 
     private void ApplyPhysicsMovement(MovementFrame frame)
@@ -196,28 +167,8 @@ public class MovementReplayer : MonoBehaviour
         }
     }
 
-    private void ApplyFacingDirection(bool shouldFaceRight)
-    {
-        if (!isPlayer2) return;
-        
-        bool currentlyFacingRight = transform.localScale.x > 0;
-        
-        if (shouldFaceRight != currentlyFacingRight)
-        {
-            // Flip the player
-            Vector3 scale = transform.localScale;
-            scale.x *= -1;
-            transform.localScale = scale;
-        }
-    }
-
-    private void SimulateShoot(Vector3 targetPosition)
-    {
-        if (!isPlayer2 || player2Controller == null) return;
-        
-        // Use the SimulateShoot method from Player2Controller
-        player2Controller.SimulateShoot(targetPosition);
-    }
+    // Player 2 specific methods removed - ApplyFacingDirection and SimulateShoot
+    // since this replayer is now only used for Player 1
 
     public bool IsReplaying()
     {
