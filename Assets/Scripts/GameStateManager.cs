@@ -55,6 +55,7 @@ public class GameStateManager : MonoBehaviour
         GameEvents.OnLoopCompleted += OnLoopCompleted;
         GameEvents.OnLevelCompleted += OnLevelCompleted;
         GameEvents.OnPlayer1Died += OnPlayerDied;
+        GameEvents.OnPlayer1Shot += OnPlayerDied; // Same handler for both spike and shot deaths
         GameEvents.OnPlayer2Died += OnPlayerDied;
         GameEvents.OnPlayer1GhostReachedGoal += OnPlayerDied; // Player 2 failed to eliminate Player 1's replay
         GameEvents.OnTimerExpired += OnPlayerDied;
@@ -65,6 +66,7 @@ public class GameStateManager : MonoBehaviour
         GameEvents.OnLoopCompleted -= OnLoopCompleted;
         GameEvents.OnLevelCompleted -= OnLevelCompleted;
         GameEvents.OnPlayer1Died -= OnPlayerDied;
+        GameEvents.OnPlayer1Shot -= OnPlayerDied;
         GameEvents.OnPlayer2Died -= OnPlayerDied;
         GameEvents.OnPlayer1GhostReachedGoal -= OnPlayerDied; // Player 2 failed to eliminate Player 1's replay
         GameEvents.OnTimerExpired -= OnPlayerDied;

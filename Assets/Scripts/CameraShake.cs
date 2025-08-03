@@ -42,6 +42,7 @@ public class CameraShake : MonoBehaviour
     {
         // Subscribe to collision/death events
         GameEvents.OnPlayer1Died += TriggerCollisionShake;
+        GameEvents.OnPlayer1Shot += TriggerCollisionShake; // Same shake for both spike and shot deaths
         GameEvents.OnPlayer2Died += TriggerCollisionShake;
         GameEvents.OnPlayer2Victory += TriggerCollisionShake; // When player gets shot
     }
@@ -50,6 +51,7 @@ public class CameraShake : MonoBehaviour
     {
         // Unsubscribe from events
         GameEvents.OnPlayer1Died -= TriggerCollisionShake;
+        GameEvents.OnPlayer1Shot -= TriggerCollisionShake;
         GameEvents.OnPlayer2Died -= TriggerCollisionShake;
         GameEvents.OnPlayer2Victory -= TriggerCollisionShake;
     }

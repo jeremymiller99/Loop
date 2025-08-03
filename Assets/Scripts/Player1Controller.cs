@@ -31,6 +31,7 @@ public class Player1Controller : MonoBehaviour
         
         // Subscribe to game events for death and goal sounds
         GameEvents.OnPlayer1Died += PlayDeathSound;
+        GameEvents.OnPlayer1Shot += PlayDeathSound; // Same sound for both spike and shot deaths
         GameEvents.OnPlayer1ReachedGoal += PlayGoalSound;
     }
 
@@ -149,6 +150,7 @@ public class Player1Controller : MonoBehaviour
     {
         // Unsubscribe from events to prevent memory leaks
         GameEvents.OnPlayer1Died -= PlayDeathSound;
+        GameEvents.OnPlayer1Shot -= PlayDeathSound;
         GameEvents.OnPlayer1ReachedGoal -= PlayGoalSound;
     }
 }

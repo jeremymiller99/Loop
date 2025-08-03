@@ -11,6 +11,7 @@ public static class GameEvents
     public static event Action OnPlayer1ReachedGoal;
     public static event Action OnPlayer1GhostReachedGoal; // When Player 1's replay completes in Phase 2
     public static event Action OnPlayer1Died; // When Player 1 hits spike in Phase 1
+    public static event Action OnPlayer1Shot; // When Player 1 gets shot by Player 2
     
     // Player 2 Events  
     public static event Action OnPlayer2Victory; // When Player 2 shoots Player 1
@@ -48,6 +49,12 @@ public static class GameEvents
     {
         OnPlayer1Died?.Invoke();
         TriggerDebugMessage("Player 1 died in Phase 1");
+    }
+    
+    public static void TriggerPlayer1Shot()
+    {
+        OnPlayer1Shot?.Invoke();
+        TriggerDebugMessage("Player 1 was shot by Player 2");
     }
     
     public static void TriggerPlayer2Victory()
@@ -109,6 +116,7 @@ public static class GameEvents
         OnPlayer1ReachedGoal = null;
         OnPlayer1GhostReachedGoal = null;
         OnPlayer1Died = null;
+        OnPlayer1Shot = null;
         OnPlayer2Victory = null;
         OnPlayer2Died = null;
         OnTimerExpired = null;

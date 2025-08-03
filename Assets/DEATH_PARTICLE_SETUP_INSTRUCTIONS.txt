@@ -1,0 +1,59 @@
+DEATH PARTICLE SYSTEM SETUP INSTRUCTIONS
+=========================================
+
+QUICK SETUP (Automatic):
+========================
+The system now auto-creates everything needed at runtime! Just follow step 1 below.
+
+1. ADD DEATH PARTICLE SYSTEM TO SCENE:
+   - In your scene hierarchy, create an empty GameObject
+   - Name it "DeathParticleManager"
+   - Add the "DeathParticleSystem" component to it
+   - The script will automatically:
+     * Create a ParticleSystem child object
+     * Create a white particle material
+     * Configure all particle settings
+
+2. OPTIONAL IMPROVEMENTS:
+   - If you want to use the existing white.jpg texture, drag it into the "White Texture" slot
+   - Otherwise, the system creates a runtime white texture automatically
+
+3. CONFIGURE SETTINGS (Optional):
+   - Particle Count: How many particles to spawn (default: 50)
+   - Explosion Force: How fast particles fly out (default: 8)
+   - Particle Lifetime: How long particles last (default: 1.5 seconds)
+   - Particle Size: Base size of each particle (default: 0.1)
+   - Particle Size Variation: Random size variation (default: 0.05)
+
+4. TEST THE EFFECT:
+   - Play the scene
+   - Kill either player (run into spikes or get shot)
+   - You should see white square particles explode from the player's position
+
+MANUAL SETUP (Advanced/Optional):
+================================
+If you prefer to manually create the particle material:
+
+1. CREATE PARTICLE MATERIAL:
+   - Right-click in Assets folder > Create > Material
+   - Name it "WhiteParticleMaterial"
+   - Set Shader to "Sprites/Default" or "Universal Render Pipeline/2D/Sprite-Unlit-Default"
+   - Drag "white.jpg" texture to the "Sprite Texture" slot
+   - Set material color to pure white
+   - Drag this material into the "Particle Material" slot on the DeathParticleSystem component
+
+TROUBLESHOOTING:
+- If particles don't appear: The system should auto-create everything, check Console for error messages
+- If particles are too big/small: Adjust Particle Size and Particle Size Variation settings
+- If effect is too weak: Increase Particle Count and Explosion Force
+- If effect lasts too long: Decrease Particle Lifetime
+- Check that the DeathParticleManager GameObject is active in the scene
+
+The particle system automatically:
+- Subscribes to player death events
+- Positions itself at the dying player's location
+- Creates an explosion effect with white squares
+- Fades out particles over time
+- Works for both Player 1 and Player 2 deaths
+
+Note: Make sure to add this DeathParticleManager to each scene where you want death effects!

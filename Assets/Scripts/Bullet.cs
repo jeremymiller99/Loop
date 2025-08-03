@@ -115,8 +115,8 @@ public class Bullet : MonoBehaviour
                 Debug.Log("Player 1 was shot! Player 2 wins!");
                 hasTriggeredVictory = true; // Prevent duplicate triggers
                 
-                // Trigger events - Player 1 dies and Player 2 wins
-                GameEvents.TriggerPlayer1Died(); // This will play Player 1's death sound
+                // Trigger events - Player 1 gets shot and Player 2 wins
+                GameEvents.TriggerPlayer1Shot(); // This will play Player 1's shot death sound and particles
                 GameEvents.TriggerPlayer2Victory();
             }
         }
@@ -156,8 +156,8 @@ public class Bullet : MonoBehaviour
                 Debug.Log("Player 1 was shot! Player 2 wins!");
                 hasTriggeredVictory = true; // Prevent duplicate triggers
                 
-                // Trigger events - Player 1 dies and Player 2 wins
-                GameEvents.TriggerPlayer1Died(); // This will play Player 1's death sound
+                // Trigger events - Player 1 gets shot and Player 2 wins
+                GameEvents.TriggerPlayer1Shot(); // This will play Player 1's shot death sound and particles
                 GameEvents.TriggerPlayer2Victory();
             }
         }

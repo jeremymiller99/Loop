@@ -528,6 +528,7 @@ public class PlayerManager : MonoBehaviour
         GameEvents.OnPlayer1ReachedGoal += OnPlayer1ReachedGoal;
         GameEvents.OnPlayer1GhostReachedGoal += OnPlayer1GhostReachedGoal;
         GameEvents.OnPlayer1Died += OnPlayer1Died;
+        GameEvents.OnPlayer1Shot += OnPlayer1Died; // Same handler for both spike and shot deaths
         GameEvents.OnPlayer2Victory += OnPlayer2Victory;
         GameEvents.OnPlayer2Died += OnPlayer2Died;
         GameEvents.OnTimerExpired += OnTimerExpired;
@@ -547,6 +548,7 @@ public class PlayerManager : MonoBehaviour
         GameEvents.OnPlayer1ReachedGoal -= OnPlayer1ReachedGoal;
         GameEvents.OnPlayer1GhostReachedGoal -= OnPlayer1GhostReachedGoal;
         GameEvents.OnPlayer1Died -= OnPlayer1Died;
+        GameEvents.OnPlayer1Shot -= OnPlayer1Died;
         GameEvents.OnPlayer2Victory -= OnPlayer2Victory;
         GameEvents.OnPlayer2Died -= OnPlayer2Died;
         GameEvents.OnTimerExpired -= OnTimerExpired;
