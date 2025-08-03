@@ -4323,7 +4323,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 990833eca78532a4095eaee96ea2e996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phaseTimerDuration: 30
+  phaseTimerDuration: 6
   enableTimer: 1
   debugMode: 0
 --- !u!1001 &1343368059
