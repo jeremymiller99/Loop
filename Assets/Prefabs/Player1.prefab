@@ -181,6 +181,10 @@ MonoBehaviour:
   moveSpeed: 12
   jumpForce: 20
   airControl: 0.7
+  jumpSound: {fileID: 8300000, guid: f6c9472d00648ca42acdc6502504019b, type: 3}
+  landSound: {fileID: 8300000, guid: 10f74b04d1904d64189515f2a9a33ab1, type: 3}
+  deathSound: {fileID: 8300000, guid: 1fb881804a3ed7e4ab290f0c5f388b9c, type: 3}
+  goalSound: {fileID: 8300000, guid: 3b484c7934ae6d145998dd88acfc063b, type: 3}
 --- !u!114 &267476443035551848
 MonoBehaviour:
   m_ObjectHideFlags: 0

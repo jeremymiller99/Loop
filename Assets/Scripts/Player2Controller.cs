@@ -11,13 +11,23 @@ public class Player2Controller : MonoBehaviour
     [SerializeField] private float fireRate = 0.3f; // Time between shots (automatic fire)
     [SerializeField] private float gunDistance = 0.8f; // Distance gun orbits around player
     
+    [Header("Audio")]
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField] private AudioClip landSound;
+    [SerializeField] private AudioClip deathSound;
+    [SerializeField] private AudioClip goalSound;
+    [SerializeField] private AudioClip shootSound;
+    
     private Rigidbody2D rb;
     private bool isGrounded;
+    private bool wasGrounded; // Track previous ground state for landing detection
     private bool isActivePlayer = false; // Player 2 starts inactive
     private float nextFireTime = 0f; // Time when player can fire next bullet
     private bool facingRight = false; // Track which direction player is facing (starts facing left)
     private Camera playerCamera; // Reference to main camera
     private Vector3 originalGunScale; // Store original gun scale
+    private AudioSource audioSource;
+    private bool hasPlayedJumpSound = false; // Prevent jump sound spam when holding key
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -35,6 +45,15 @@ public class Player2Controller : MonoBehaviour
         {
             originalGunScale = gun.localScale;
         }
+        
+        // Initialize audio source
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+        
+        // Subscribe to game events for death sound (Player 2 can die from spikes)
+        GameEvents.OnPlayer2Died += PlayDeathSound;
+        GameEvents.OnPlayer2Victory += PlayGoalSound; // Play goal sound when Player 2 wins
     }
 
     // Update is called once per frame
@@ -69,6 +88,12 @@ public class Player2Controller : MonoBehaviour
             Jump();
         }
         
+        // Reset jump sound flag when jump keys are released or player is not grounded
+        if ((!Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.UpArrow)) || !isGrounded)
+        {
+            hasPlayedJumpSound = false;
+        }
+        
         // Handle gun aiming towards mouse and player facing
         if (gun != null && playerCamera != null)
         {
@@ -87,12 +112,20 @@ public class Player2Controller : MonoBehaviour
     private void Jump()
     {
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        PlayJumpSound();
     }
     
     // Method called by GroundCheck script
     public void SetGrounded(bool grounded)
     {
+        wasGrounded = isGrounded;
         isGrounded = grounded;
+        
+        // Play landing sound when transitioning from not grounded to grounded
+        if (!wasGrounded && isGrounded)
+        {
+            PlayLandSound();
+        }
     }
     
     // Method to set whether this player is active
@@ -218,6 +251,9 @@ public class Player2Controller : MonoBehaviour
         {
             Debug.LogError("Bullet prefab doesn't have Bullet script attached!");
         }
+        
+        // Play shooting sound
+        PlayShootSound();
     }
     
     // Public method for replay system to simulate shooting at a specific position
@@ -246,5 +282,64 @@ public class Player2Controller : MonoBehaviour
         {
             Debug.LogError("Bullet prefab doesn't have Bullet script attached!");
         }
+        
+        // Play shooting sound
+        PlayShootSound();
+    }
+    
+    #region Audio Methods
+    
+    private void PlayJumpSound()
+    {
+        if (jumpSound != null && audioSource != null && !hasPlayedJumpSound)
+        {
+            // Store original pitch and temporarily lower it
+            float originalPitch = audioSource.pitch;
+            audioSource.pitch = 0.4f; // Much lower pitch to make it deep and less ear-piercing
+            audioSource.PlayOneShot(jumpSound, 0.5f); // Play at 50% volume to tone it down
+            audioSource.pitch = originalPitch; // Restore original pitch
+            hasPlayedJumpSound = true; // Prevent playing again until reset
+        }
+    }
+    
+    private void PlayLandSound()
+    {
+        if (landSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(landSound);
+        }
+    }
+    
+    private void PlayDeathSound()
+    {
+        if (deathSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(deathSound);
+        }
+    }
+    
+    private void PlayGoalSound()
+    {
+        if (goalSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(goalSound);
+        }
+    }
+    
+    private void PlayShootSound()
+    {
+        if (shootSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(shootSound);
+        }
+    }
+    
+    #endregion
+    
+    void OnDestroy()
+    {
+        // Unsubscribe from events to prevent memory leaks
+        GameEvents.OnPlayer2Died -= PlayDeathSound;
+        GameEvents.OnPlayer2Victory -= PlayGoalSound;
     }
 }
