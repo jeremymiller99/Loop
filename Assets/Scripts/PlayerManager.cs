@@ -21,30 +21,19 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private MovementRecorder player1Recorder;     // only record P1
     [SerializeField] private MovementReplayer  player1Replayer;    // replay needed only for P1
     
-    [Header("Timer Settings")]
-    [SerializeField] private float phaseTimerDuration = 30f; // 30 seconds per phase
-    [SerializeField] private Text timerText; // UI Text to display countdown
-    [SerializeField] private bool enableTimer = true; // Toggle to enable/disable timer
-    
     [Header("Level Settings")]
-    [SerializeField] private int requiredLoopsToComplete = 1; // How many loops needed to complete this level
     [SerializeField] private bool debugMode = false; // Show debug information
     
     private GamePhase currentPhase = GamePhase.Player1Phase;
     private Vector3 player1StartPosition;
     private Vector3 player2StartPosition;
     
-    // Timer variables
-    private float currentTimer;
-    private bool timerActive;
-    
     // Movement recording variables
     private MovementRecording player1LastRecording;
     
-    // Loop tracking variables
-    private int completedLoops = 0; // How many complete loops (Phase 1 + Phase 2) have been finished
-    private bool isFirstPhase1 = true; // Track if this is the very first Phase 1 (no recordings exist yet)
-    private bool levelCompleted = false;
+    // Manager references
+    private GameStateManager gameStateManager;
+    private TimerManager timerManager;
     
     void Start()
     {
@@ -53,6 +42,16 @@ public class PlayerManager : MonoBehaviour
             player1StartPosition = player1.transform.position;
         if (player2 != null)
             player2StartPosition = player2.transform.position;
+        
+        // Initialize manager references
+        gameStateManager = GameStateManager.Instance;
+        timerManager = TimerManager.Instance;
+        
+        // Log warnings if managers are missing
+        if (gameStateManager == null)
+            Debug.LogWarning("PlayerManager: No GameStateManager found in scene!");
+        if (timerManager == null)
+            Debug.LogWarning("PlayerManager: No TimerManager found in scene!");
         
         // Set up movement recording/replay components if not assigned
         SetupRecordingComponents();
@@ -70,20 +69,6 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             RestartLevel();
-        }
-        
-        // Update timer if active
-        if (timerActive && enableTimer)
-        {
-            currentTimer -= Time.deltaTime;
-            UpdateTimerUI();
-            
-            // Check if time ran out
-            if (currentTimer <= 0f)
-            {
-                timerActive = false;
-                GameEvents.TriggerTimerExpired();
-            }
         }
     }
     
@@ -108,21 +93,19 @@ public class PlayerManager : MonoBehaviour
             player1Recorder.StartRecording();
         }
         
-        // Start the timer for this phase
-        StartTimer();
-        
         // Debug information
-        string phaseMessage = isFirstPhase1 ? 
-            $"Phase 1: Control Player 1 to reach the goal! (Loop 1/{requiredLoopsToComplete} - First attempt)" :
-            $"Phase 1: Control Player 1 to reach the goal! (Loop {completedLoops + 1}/{requiredLoopsToComplete} - Player 2 ghost active)";
-        
-        if (debugMode)
+        if (debugMode && gameStateManager != null)
         {
+            bool isFirstPhase = gameStateManager.IsFirstPhase1();
+            int currentLoop = gameStateManager.GetCompletedLoops() + 1;
+            int totalLoops = gameStateManager.GetRequiredLoops();
+            
+            string phaseMessage = isFirstPhase ? 
+                $"Phase 1: Control Player 1 to reach the goal! (Loop {currentLoop}/{totalLoops} - First attempt)" :
+                $"Phase 1: Control Player 1 to reach the goal! (Loop {currentLoop}/{totalLoops} - Player 2 ghost active)";
+            
             Debug.Log(phaseMessage);
         }
-        
-        // Update UI with current loop info
-        UpdateLoopUI();
         
         // Trigger phase started event
         GameEvents.TriggerPhaseStarted(GamePhase.Player1Phase);
@@ -138,9 +121,6 @@ public class PlayerManager : MonoBehaviour
             player1Recorder.StopRecording();
             player1LastRecording = player1Recorder.GetCompletedRecording();
         }
-        
-        // Mark that we're no longer in the first Phase 1
-        isFirstPhase1 = false;
         
         // Reset player positions
         ResetPlayerPositions();
@@ -162,18 +142,13 @@ public class PlayerManager : MonoBehaviour
             }
         }
         
-        // No longer need to record Player 2's movements
-        
-        // Start the timer for this phase
-        StartTimer();
-        
-        if (debugMode)
+        // Debug information
+        if (debugMode && gameStateManager != null)
         {
-            Debug.Log($"Phase 2: Control Player 2 to shoot Player 1! (Loop {completedLoops + 1}/{requiredLoopsToComplete} - Player 1 ghost active)");
+            int currentLoop = gameStateManager.GetCompletedLoops() + 1;
+            int totalLoops = gameStateManager.GetRequiredLoops();
+            Debug.Log($"Phase 2: Control Player 2 to shoot Player 1! (Loop {currentLoop}/{totalLoops} - Player 1 ghost active)");
         }
-        
-        // Update UI with current loop info
-        UpdateLoopUI();
         
         // Trigger phase started event
         GameEvents.TriggerPhaseStarted(GamePhase.Player2Phase);
@@ -209,13 +184,11 @@ public class PlayerManager : MonoBehaviour
     private void OnPlayer1ReachedGoal()
     {
         Debug.Log("Player 1 reached the goal! Switching to Player 2 phase...");
-        StopTimer(); // Stop the current phase timer
         
-        // Immediate visual feedback
-        if (timerText != null)
+        // Stop the timer through the manager
+        if (timerManager != null)
         {
-            timerText.text = "GOAL REACHED!";
-            timerText.color = Color.blue;
+            timerManager.StopTimer();
         }
         
         // Proceed to Phase 2 of the current loop
@@ -225,9 +198,12 @@ public class PlayerManager : MonoBehaviour
     private void OnPlayer2Victory()
     {
         Debug.Log("Player 2 shot Player 1! Loop completed.");
-        StopTimer(); // Stop the timer when phase ends
         
-        // No longer need to record Player 2's movements
+        // Stop the timer through the manager
+        if (timerManager != null)
+        {
+            timerManager.StopTimer();
+        }
         
         // Stop Player 1's replay immediately
         if (player1Replayer != null)
@@ -235,34 +211,31 @@ public class PlayerManager : MonoBehaviour
             player1Replayer.StopReplay();
         }
         
-        // Increment completed loops count
-        completedLoops++;
-        
-        // Trigger loop completed event
-        GameEvents.TriggerLoopCompleted(completedLoops, requiredLoopsToComplete);
-        
-        // Check if we've completed all required loops
-        if (completedLoops >= requiredLoopsToComplete)
+        // Get current state from GameStateManager
+        if (gameStateManager != null)
         {
-            // Level completed!
-            HandleLevelComplete();
-        }
-        else
-        {
-            // Need more loops - start next loop (Phase 1)
-            if (timerText != null)
-            {
-                timerText.text = $"LOOP {completedLoops}/{requiredLoopsToComplete} COMPLETE!";
-                timerText.color = Color.green;
-            }
+            int completedLoops = gameStateManager.GetCompletedLoops() + 1; // This will be the new count
+            int requiredLoops = gameStateManager.GetRequiredLoops();
             
-            if (debugMode)
-            {
-                Debug.Log($"Loop {completedLoops}/{requiredLoopsToComplete} completed. Starting next loop...");
-            }
+            // Trigger loop completed event (GameStateManager will handle the increment)
+            GameEvents.TriggerLoopCompleted(completedLoops, requiredLoops);
             
-            // Start next loop after short delay
-            Invoke(nameof(StartPlayer1Phase), 0.5f);
+            // Check if we've completed all required loops
+            if (completedLoops >= requiredLoops)
+            {
+                // Level completed!
+                HandleLevelComplete();
+            }
+            else
+            {
+                if (debugMode)
+                {
+                    Debug.Log($"Loop {completedLoops}/{requiredLoops} completed. Starting next loop...");
+                }
+                
+                // Start next loop after short delay
+                Invoke(nameof(StartPlayer1Phase), 0.5f);
+            }
         }
     }
     
@@ -279,8 +252,11 @@ public class PlayerManager : MonoBehaviour
             goalTrigger.ResetGoal();
         }
         
-        // Restart the timer for this phase
-        StartTimer();
+        // Restart the timer through the manager
+        if (timerManager != null)
+        {
+            timerManager.StartTimer();
+        }
         
         Debug.Log($"Phase {currentPhase} has been reset!");
     }
@@ -318,58 +294,13 @@ public class PlayerManager : MonoBehaviour
     // Public property to get current phase
     public GamePhase CurrentPhase => currentPhase;
     
-    #region Timer Methods
+
     
-    private void StartTimer()
-    {
-        if (!enableTimer) return;
-        
-        currentTimer = phaseTimerDuration;
-        timerActive = true;
-        UpdateTimerUI();
-        Debug.Log($"Timer started for {currentPhase}: {phaseTimerDuration} seconds");
-    }
-    
-    private void StopTimer()
-    {
-        timerActive = false;
-        if (timerText != null)
-        {
-            timerText.text = "";
-        }
-    }
-    
-    private void UpdateTimerUI()
-    {
-        if (timerText != null)
-        {
-            // Format timer as MM:SS
-            int minutes = Mathf.FloorToInt(currentTimer / 60f);
-            int seconds = Mathf.FloorToInt(currentTimer % 60f);
-            timerText.text = $"Time: {minutes:00}:{seconds:00}";
-            
-            // Change color to red when time is running low (last 10 seconds)
-            if (currentTimer <= 10f)
-            {
-                timerText.color = Color.red;
-            }
-            else
-            {
-                timerText.color = Color.white;
-            }
-        }
-    }
+    #region Phase Reset and Level Management
     
     private void OnTimerExpired()
     {
         Debug.Log("Time's up! Resetting current phase...");
-        
-        // Update UI to show time expired
-        if (timerText != null)
-        {
-            timerText.text = "TIME'S UP!";
-            timerText.color = Color.red;
-        }
         
         // Reset the current phase based on the new flow requirements
         if (currentPhase == GamePhase.Player1Phase)
@@ -393,10 +324,6 @@ public class PlayerManager : MonoBehaviour
             Invoke(nameof(ResetPhase2), 1f); // Short delay to show "TIME'S UP!" message
         }
     }
-    
-    #endregion
-    
-    #region Phase Reset and Level Management
     
     private void ResetPhase1()
     {
@@ -436,15 +363,15 @@ public class PlayerManager : MonoBehaviour
     
     private void HandleLevelComplete()
     {
-        levelCompleted = true;
-        
-        if (timerText != null)
+        if (gameStateManager != null)
         {
-            timerText.text = "LEVEL COMPLETE!";
-            timerText.color = Color.yellow;
+            int requiredLoops = gameStateManager.GetRequiredLoops();
+            Debug.Log($"Level completed! All {requiredLoops} loops finished successfully.");
         }
-        
-        Debug.Log($"Level completed! All {requiredLoopsToComplete} loops finished successfully.");
+        else
+        {
+            Debug.Log("Level completed!");
+        }
         
         // Stop any active recordings/replays
         if (player1Recorder != null)
@@ -454,6 +381,12 @@ public class PlayerManager : MonoBehaviour
         if (player1Replayer != null)
         {
             player1Replayer.StopReplay();
+        }
+        
+        // Stop the timer
+        if (timerManager != null)
+        {
+            timerManager.StopTimer();
         }
         
         // Deactivate players
@@ -477,17 +410,7 @@ public class PlayerManager : MonoBehaviour
         // Invoke(nameof(LoadNextLevel), 3f);
     }
     
-    private void UpdateLoopUI()
-    {
-        // Update UI to show current loop progress (if you have additional UI elements)
-        // This method can be expanded to update progress bars, loop counters, etc.
-        
-        if (debugMode && timerText != null)
-        {
-            // During gameplay, don't override the timer text, but you could add separate UI elements
-            // For now, this is just a placeholder for future UI enhancements
-        }
-    }
+
     
     // Event handler for Player 1 death in Phase 1
     private void OnPlayer1Died()
@@ -495,12 +418,11 @@ public class PlayerManager : MonoBehaviour
         if (currentPhase == GamePhase.Player1Phase)
         {
             Debug.Log("Player 1 died in Phase 1! Resetting Phase 1...");
-            StopTimer();
             
-            if (timerText != null)
+            // Stop the timer through the manager
+            if (timerManager != null)
             {
-                timerText.text = "PLAYER 1 DIED!";
-                timerText.color = Color.red;
+                timerManager.StopTimer();
             }
             
             Invoke(nameof(ResetPhase1), 1f);
@@ -513,12 +435,11 @@ public class PlayerManager : MonoBehaviour
         if (currentPhase == GamePhase.Player2Phase)
         {
             Debug.Log("Player 2 died in Phase 2! Resetting Phase 2...");
-            StopTimer();
             
-            if (timerText != null)
+            // Stop the timer through the manager
+            if (timerManager != null)
             {
-                timerText.text = "PLAYER 2 DIED!";
-                timerText.color = Color.red;
+                timerManager.StopTimer();
             }
             
             Invoke(nameof(ResetPhase2), 1f);
@@ -531,12 +452,11 @@ public class PlayerManager : MonoBehaviour
         if (currentPhase == GamePhase.Player2Phase)
         {
             Debug.Log("Player 1 (ghost) reached the goal! Player 2 failed. Resetting Phase 2...");
-            StopTimer();
             
-            if (timerText != null)
+            // Stop the timer through the manager
+            if (timerManager != null)
             {
-                timerText.text = "PLAYER 2 FAILED!";
-                timerText.color = Color.red;
+                timerManager.StopTimer();
             }
             
             Invoke(nameof(ResetPhase2), 1f);
@@ -618,35 +538,34 @@ public class PlayerManager : MonoBehaviour
         // No longer need Player 2 recorder component
     }
     
-    // Public method to get current loop count (useful for UI or debugging)
+    // Public method to get current loop count (delegates to GameStateManager)
     public int GetCompletedLoops()
     {
-        return completedLoops;
+        return gameStateManager != null ? gameStateManager.GetCompletedLoops() : 0;
     }
     
-    // Public method to get required loops for this level
+    // Public method to get required loops for this level (delegates to GameStateManager)
     public int GetRequiredLoops()
     {
-        return requiredLoopsToComplete;
+        return gameStateManager != null ? gameStateManager.GetRequiredLoops() : 1;
     }
     
-    // Public method to check if we're in the first Phase 1
+    // Public method to check if we're in the first Phase 1 (delegates to GameStateManager)
     public bool IsFirstPhase1()
     {
-        return isFirstPhase1;
+        return gameStateManager != null ? gameStateManager.IsFirstPhase1() : true;
     }
     
-    // Public method to check if level is completed
+    // Public method to check if level is completed (delegates to GameStateManager)
     public bool IsLevelCompleted()
     {
-        return levelCompleted;
+        return gameStateManager != null ? gameStateManager.IsLevelCompleted() : false;
     }
     
-    // Public method to get current loop progress (useful for UI)
+    // Public method to get current loop progress (delegates to GameStateManager)
     public float GetLoopProgress()
     {
-        if (requiredLoopsToComplete == 0) return 0f;
-        return (float)completedLoops / requiredLoopsToComplete;
+        return gameStateManager != null ? gameStateManager.GetLoopProgress() : 0f;
     }
     
     // Public method to get the active recorder (useful for debugging)

@@ -95,6 +95,13 @@ public class Bullet : MonoBehaviour
             return;
         }
         
+        // Ignore collision with goal triggers
+        if (other.GetComponent<GoalTrigger>() != null)
+        {
+            Debug.Log($"Ignoring collision with goal trigger: {other.name}");
+            return;
+        }
+        
         // Check if bullet hit a player
         if (other.CompareTag("Player"))
         {
@@ -124,6 +131,13 @@ public class Bullet : MonoBehaviour
         if (shooter != null && collision.gameObject == shooter)
         {
             Debug.Log($"Ignoring collision with shooter: {shooter.name}");
+            return;
+        }
+        
+        // Ignore collision with goal triggers
+        if (collision.gameObject.GetComponent<GoalTrigger>() != null)
+        {
+            Debug.Log($"Ignoring collision with goal trigger: {collision.gameObject.name}");
             return;
         }
         
