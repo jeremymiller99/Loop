@@ -6,16 +6,16 @@ public class UINavigation : MonoBehaviour
     [Header("Scene Names")]
     [SerializeField] private string mainMenuScene = "MainMenu";
     [SerializeField] private string levelSelectScene = "LevelSelect";
-    [SerializeField] private string level1Scene = "Level1";
-    [SerializeField] private string level2Scene = "Level2"; 
-    [SerializeField] private string level3Scene = "Level3";
-    [SerializeField] private string level4Scene = "Level4";
-    [SerializeField] private string level5Scene = "Level5";
+    [SerializeField] private string level1Scene = "L1";
+    [SerializeField] private string level2Scene = "L2"; 
+    [SerializeField] private string level3Scene = "L3";
+    [SerializeField] private string level4Scene = "L4";
+    [SerializeField] private string level5Scene = "L5";
 
     public void OnPlayButtonPressed()
     {
-        // Load first level when play is pressed
-        SceneManager.LoadScene(levelSelectScene);
+        // Load first level directly, bypassing level select
+        SceneManager.LoadScene(level1Scene);
     }
 
     public void OnExitButtonPressed() 

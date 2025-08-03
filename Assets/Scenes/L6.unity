@@ -2857,7 +2857,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6649f15f3ec4d54f8a377c70e382d8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextLevelSceneName: Main Menu
+  nextLevelSceneName: MainMenu
   mainMenuSceneName: MainMenu
   levelSelectSceneName: LevelSelect
   sRankTime: 15
@@ -4323,7 +4323,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 990833eca78532a4095eaee96ea2e996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phaseTimerDuration: 6
+  phaseTimerDuration: 9
   enableTimer: 1
   debugMode: 0
 --- !u!1001 &1343368059

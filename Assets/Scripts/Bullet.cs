@@ -110,7 +110,7 @@ public class Bullet : MonoBehaviour
             
             // Check if this is Player 1 being hit (victory condition for Player 2)
             Player1Controller player1 = other.GetComponent<Player1Controller>();
-            if (player1 != null && !hasTriggeredVictory)
+            if (player1 != null && !hasTriggeredVictory && !player1.IsInvulnerable)
             {
                 Debug.Log("Player 1 was shot! Player 2 wins!");
                 hasTriggeredVictory = true; // Prevent duplicate triggers
@@ -118,6 +118,10 @@ public class Bullet : MonoBehaviour
                 // Trigger events - Player 1 gets shot and Player 2 wins
                 GameEvents.TriggerPlayer1Shot(); // This will play Player 1's shot death sound and particles
                 GameEvents.TriggerPlayer2Victory();
+            }
+            else if (player1 != null && player1.IsInvulnerable)
+            {
+                Debug.Log("Player 1 is invulnerable - bullet has no effect!");
             }
         }
         
@@ -151,7 +155,7 @@ public class Bullet : MonoBehaviour
             
             // Check if this is Player 1 being hit (victory condition for Player 2)
             Player1Controller player1 = collision.gameObject.GetComponent<Player1Controller>();
-            if (player1 != null && !hasTriggeredVictory)
+            if (player1 != null && !hasTriggeredVictory && !player1.IsInvulnerable)
             {
                 Debug.Log("Player 1 was shot! Player 2 wins!");
                 hasTriggeredVictory = true; // Prevent duplicate triggers
@@ -159,6 +163,10 @@ public class Bullet : MonoBehaviour
                 // Trigger events - Player 1 gets shot and Player 2 wins
                 GameEvents.TriggerPlayer1Shot(); // This will play Player 1's shot death sound and particles
                 GameEvents.TriggerPlayer2Victory();
+            }
+            else if (player1 != null && player1.IsInvulnerable)
+            {
+                Debug.Log("Player 1 is invulnerable - bullet has no effect!");
             }
         }
         

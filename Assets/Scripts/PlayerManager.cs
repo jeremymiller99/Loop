@@ -456,8 +456,8 @@ public class PlayerManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("No next level configured. Going to level select...");
-                LevelCompleteManager.Instance.GoToLevelSelect();
+                Debug.Log("No next level configured. Going to main menu...");
+                LevelCompleteManager.Instance.GoToMainMenu();
             }
         }
         else

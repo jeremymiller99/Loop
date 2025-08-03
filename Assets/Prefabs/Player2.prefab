@@ -302,7 +302,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8685139408742622695, guid: 5d2798edffa4e5340953658840a81588, type: 3}
   firePoint: {fileID: 5464969780398416007}
   gun: {fileID: 7006497056462645507}
-  fireRate: 0.3
+  fireRate: 0.2
   gunDistance: 0.8
   jumpSound: {fileID: 8300000, guid: f6c9472d00648ca42acdc6502504019b, type: 3}
   landSound: {fileID: 8300000, guid: 10f74b04d1904d64189515f2a9a33ab1, type: 3}

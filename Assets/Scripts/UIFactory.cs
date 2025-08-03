@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 public static class UIFactory
 {
     // Default UI settings
-    private static readonly Vector2 DefaultCanvasResolution = new Vector2(1920, 1080);
+    private static readonly Vector2 DefaultCanvasResolution = new Vector2(960, 640);
     private static readonly float DefaultFontSize = 36f;
     private static readonly Color DefaultNormalColor = Color.white;
     

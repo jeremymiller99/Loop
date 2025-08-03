@@ -130,8 +130,8 @@ public class LevelCompleteManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Next level scene name not set! Going to level select instead.");
-            GoToLevelSelect();
+            Debug.LogWarning("Next level scene name not set! Going to main menu instead.");
+            GoToMainMenu();
         }
     }
     

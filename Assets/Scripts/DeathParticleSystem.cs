@@ -49,6 +49,7 @@ public class DeathParticleSystem : MonoBehaviour
         
         // Subscribe to goal events
         GameEvents.OnPlayer1ReachedGoal += OnPlayer1ReachedGoal;
+        GameEvents.OnPlayer1GhostReachedGoal += OnPlayer1GhostReachedGoal;
         
         // Subscribe to phase events to reset the system
         GameEvents.OnPhaseStarted += OnPhaseStarted;
@@ -61,6 +62,7 @@ public class DeathParticleSystem : MonoBehaviour
         GameEvents.OnPlayer2Died -= OnPlayer2Death;
         GameEvents.OnPlayer1Shot -= OnPlayer1Shot;
         GameEvents.OnPlayer1ReachedGoal -= OnPlayer1ReachedGoal;
+        GameEvents.OnPlayer1GhostReachedGoal -= OnPlayer1GhostReachedGoal;
         GameEvents.OnPhaseStarted -= OnPhaseStarted;
     }
     
@@ -244,6 +246,22 @@ public class DeathParticleSystem : MonoBehaviour
         else if (isPlayingEffect)
         {
             Debug.Log("Goal particles already playing - ignoring duplicate goal event");
+        }
+    }
+    
+    private void OnPlayer1GhostReachedGoal()
+    {
+        if (player1 != null && !isPlayingEffect)
+        {
+            // Use a golden/yellow tint for ghost victory particles
+            Color ghostVictoryTint = new Color(1f, 1f, 0.5f, 1f); // Golden yellow
+            PlayParticleEffect(player1.transform.position, ghostVictoryTint);
+            HidePlayerSprite(player1.gameObject);
+            Debug.Log($"Playing ghost victory particles for Player 1 at position: {player1.transform.position}");
+        }
+        else if (isPlayingEffect)
+        {
+            Debug.Log("Ghost victory particles already playing - ignoring duplicate ghost goal event");
         }
     }
     

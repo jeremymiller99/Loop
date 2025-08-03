@@ -54,6 +54,9 @@ public class Player2Controller : MonoBehaviour
         // Subscribe to game events for death sound (Player 2 can die from spikes)
         GameEvents.OnPlayer2Died += PlayDeathSound;
         GameEvents.OnPlayer2Victory += PlayGoalSound; // Play goal sound when Player 2 wins
+        
+        // Subscribe to death events to immediately disable input
+        GameEvents.OnPlayer2Died += OnPlayerDeath;
     }
 
     // Update is called once per frame
@@ -83,13 +86,13 @@ public class Player2Controller : MonoBehaviour
         }
         
         // Handle jumping
-        if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)) && isGrounded)
+        if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) && isGrounded)
         {
             Jump();
         }
         
         // Reset jump sound flag when jump keys are released or player is not grounded
-        if ((!Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.UpArrow)) || !isGrounded)
+        if ((!Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.W)) || !isGrounded)
         {
             hasPlayedJumpSound = false;
         }
@@ -341,5 +344,13 @@ public class Player2Controller : MonoBehaviour
         // Unsubscribe from events to prevent memory leaks
         GameEvents.OnPlayer2Died -= PlayDeathSound;
         GameEvents.OnPlayer2Victory -= PlayGoalSound;
+        GameEvents.OnPlayer2Died -= OnPlayerDeath;
+    }
+    
+    // Event handler for death - immediately disable input
+    private void OnPlayerDeath()
+    {
+        isActivePlayer = false;
+        Debug.Log("Player 2 input disabled due to death");
     }
 }

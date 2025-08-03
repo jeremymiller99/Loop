@@ -16,6 +16,7 @@ public class Player1Controller : MonoBehaviour
     private bool isGrounded;
     private bool wasGrounded; // Track previous ground state for landing detection
     private bool isActivePlayer = true; // Controls whether this player responds to input
+    private bool isInvulnerable = false; // Controls whether this player can be shot/killed
     private AudioSource audioSource;
     private bool hasPlayedJumpSound = false; // Prevent jump sound spam when holding key
 
@@ -33,6 +34,12 @@ public class Player1Controller : MonoBehaviour
         GameEvents.OnPlayer1Died += PlayDeathSound;
         GameEvents.OnPlayer1Shot += PlayDeathSound; // Same sound for both spike and shot deaths
         GameEvents.OnPlayer1ReachedGoal += PlayGoalSound;
+        GameEvents.OnPlayer1GhostReachedGoal += OnGhostReachedGoal;
+        GameEvents.OnPhaseStarted += OnPhaseStarted;
+        
+        // Subscribe to death events to immediately disable input
+        GameEvents.OnPlayer1Died += OnPlayerDeath;
+        GameEvents.OnPlayer1Shot += OnPlayerDeath;
     }
 
     // Update is called once per frame
@@ -62,13 +69,13 @@ public class Player1Controller : MonoBehaviour
         }
         
         // Handle jumping
-        if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)) && isGrounded)
+        if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) && isGrounded)
         {
             Jump();
         }
         
         // Reset jump sound flag when jump keys are released or player is not grounded
-        if ((!Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.UpArrow)) || !isGrounded)
+        if ((!Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.W)) || !isGrounded)
         {
             hasPlayedJumpSound = false;
         }
@@ -99,11 +106,28 @@ public class Player1Controller : MonoBehaviour
         isActivePlayer = active;
     }
     
+    // Method to set whether this player is invulnerable to bullets
+    public void SetInvulnerable(bool invulnerable)
+    {
+        isInvulnerable = invulnerable;
+        if (invulnerable)
+        {
+            Debug.Log("Player 1 is now invulnerable to bullets");
+        }
+        else
+        {
+            Debug.Log("Player 1 is no longer invulnerable to bullets");
+        }
+    }
+    
     // Property to check if this player is active
     public bool IsActive => isActivePlayer;
     
     // Property to check if this player is grounded (useful for recording system)
     public bool IsGrounded => isGrounded;
+    
+    // Property to check if this player is invulnerable to bullets
+    public bool IsInvulnerable => isInvulnerable;
     
     #region Audio Methods
     
@@ -152,5 +176,29 @@ public class Player1Controller : MonoBehaviour
         GameEvents.OnPlayer1Died -= PlayDeathSound;
         GameEvents.OnPlayer1Shot -= PlayDeathSound;
         GameEvents.OnPlayer1ReachedGoal -= PlayGoalSound;
+        GameEvents.OnPlayer1GhostReachedGoal -= OnGhostReachedGoal;
+        GameEvents.OnPhaseStarted -= OnPhaseStarted;
+        GameEvents.OnPlayer1Died -= OnPlayerDeath;
+        GameEvents.OnPlayer1Shot -= OnPlayerDeath;
+    }
+    
+    // Event handler for when the ghost reaches the goal in Phase 2
+    private void OnGhostReachedGoal()
+    {
+        SetInvulnerable(true);
+    }
+    
+    // Event handler for when a new phase starts - reset invulnerable state
+    private void OnPhaseStarted(GamePhase phase)
+    {
+        SetInvulnerable(false);
+        Debug.Log($"Player 1 invulnerable state reset for phase: {phase}");
+    }
+    
+    // Event handler for death - immediately disable input
+    private void OnPlayerDeath()
+    {
+        isActivePlayer = false;
+        Debug.Log("Player 1 input disabled due to death");
     }
 }
