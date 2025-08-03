@@ -304,6 +304,11 @@ MonoBehaviour:
   gun: {fileID: 7006497056462645507}
   fireRate: 0.3
   gunDistance: 0.8
+  jumpSound: {fileID: 8300000, guid: f6c9472d00648ca42acdc6502504019b, type: 3}
+  landSound: {fileID: 8300000, guid: 10f74b04d1904d64189515f2a9a33ab1, type: 3}
+  deathSound: {fileID: 8300000, guid: 1fb881804a3ed7e4ab290f0c5f388b9c, type: 3}
+  goalSound: {fileID: 8300000, guid: 3b484c7934ae6d145998dd88acfc063b, type: 3}
+  shootSound: {fileID: 8300000, guid: 3b4e922af70b4ab478d67d6e53a998c2, type: 3}
 --- !u!1 &7044147991499387134
 GameObject:
   m_ObjectHideFlags: 0
