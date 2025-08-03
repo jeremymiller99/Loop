@@ -763,7 +763,7 @@ MonoBehaviour:
   player2Recorder: {fileID: 0}
   player1Replayer: {fileID: 0}
   player2Replayer: {fileID: 0}
-  phaseTimerDuration: 10
+  phaseTimerDuration: 4
   timerText: {fileID: 276002381}
   enableTimer: 1
   requiredLoopsToComplete: 1
