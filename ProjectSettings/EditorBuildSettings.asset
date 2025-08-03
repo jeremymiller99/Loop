@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Scenes/LevelSelect.unity
     guid: 27f651268804a7d40b17c06a6b38c0cc
   - enabled: 1
-    path: Assets/Scenes/Random Levels/Key level.unity
+    path: Assets/Scenes/L7.unity
     guid: f26843b3b55673847ab93874d545c089
   - enabled: 1
     path: Assets/Scenes/Random Levels/L random.unity
