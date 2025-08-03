@@ -10,6 +10,7 @@ public class Bullet : MonoBehaviour
     private Vector2 direction;
     private bool directionSet = false;
     private GameObject shooter; // Reference to the player who shot this bullet
+    private bool hasTriggeredVictory = false; // Prevent duplicate victory events
     
     void Awake()
     {
@@ -109,9 +110,10 @@ public class Bullet : MonoBehaviour
             
             // Check if this is Player 1 being hit (victory condition for Player 2)
             Player1Controller player1 = other.GetComponent<Player1Controller>();
-            if (player1 != null)
+            if (player1 != null && !hasTriggeredVictory)
             {
                 Debug.Log("Player 1 was shot! Player 2 wins!");
+                hasTriggeredVictory = true; // Prevent duplicate triggers
                 
                 // Trigger event - much more efficient than FindFirstObjectByType
                 GameEvents.TriggerPlayer2Victory();
@@ -148,9 +150,10 @@ public class Bullet : MonoBehaviour
             
             // Check if this is Player 1 being hit (victory condition for Player 2)
             Player1Controller player1 = collision.gameObject.GetComponent<Player1Controller>();
-            if (player1 != null)
+            if (player1 != null && !hasTriggeredVictory)
             {
                 Debug.Log("Player 1 was shot! Player 2 wins!");
+                hasTriggeredVictory = true; // Prevent duplicate triggers
                 
                 // Trigger event - much more efficient than FindFirstObjectByType
                 GameEvents.TriggerPlayer2Victory();

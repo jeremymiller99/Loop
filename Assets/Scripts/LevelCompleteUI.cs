@@ -122,12 +122,14 @@ public class LevelCompleteUI : MonoBehaviour
     
     private void SubscribeToEvents()
     {
-        GameEvents.OnLevelCompleted += OnLevelCompleted;
+        // Disabled: UI no longer shows - game goes directly to next level
+        // GameEvents.OnLevelCompleted += OnLevelCompleted;
     }
     
     private void UnsubscribeFromEvents()
     {
-        GameEvents.OnLevelCompleted -= OnLevelCompleted;
+        // Disabled: UI no longer shows - game goes directly to next level
+        // GameEvents.OnLevelCompleted -= OnLevelCompleted;
     }
     
     private void OnLevelCompleted()

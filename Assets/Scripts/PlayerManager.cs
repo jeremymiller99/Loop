@@ -35,6 +35,10 @@ public class PlayerManager : MonoBehaviour
     private GameStateManager gameStateManager;
     private TimerManager timerManager;
     
+    // Visual tinting for inactive players
+    private Color inactivePlayerTint = new Color(0.4f, 0.4f, 0.4f, 1f); // Dark gray tint
+    private Color activePlayerTint = Color.white; // Normal color
+    
     void Start()
     {
         // Store starting positions for reset functionality
@@ -72,6 +76,48 @@ public class PlayerManager : MonoBehaviour
         }
     }
     
+    #region Visual Tinting Methods
+    
+    private void ApplyPlayerTint(GameObject player, Color tintColor)
+    {
+        if (player == null) return;
+        
+        // Apply tint to the main sprite renderer
+        SpriteRenderer mainRenderer = player.GetComponent<SpriteRenderer>();
+        if (mainRenderer != null)
+        {
+            mainRenderer.color = tintColor;
+        }
+        
+        // Apply tint to all child sprite renderers (weapons, accessories, etc.)
+        SpriteRenderer[] childRenderers = player.GetComponentsInChildren<SpriteRenderer>();
+        foreach (SpriteRenderer renderer in childRenderers)
+        {
+            renderer.color = tintColor;
+        }
+    }
+    
+    private void SetPlayerActive(GameObject player, bool isActive)
+    {
+        if (player == null) return;
+        
+        // Apply visual tint based on active state
+        Color targetTint = isActive ? activePlayerTint : inactivePlayerTint;
+        ApplyPlayerTint(player, targetTint);
+        
+        // Enable/disable input control
+        if (player == player1?.gameObject)
+        {
+            player1?.SetActive(isActive);
+        }
+        else if (player == player2?.gameObject)
+        {
+            player2?.SetActive(isActive);
+        }
+    }
+    
+    #endregion
+    
     private void StartPlayer1Phase()
     {
         currentPhase = GamePhase.Player1Phase;
@@ -79,13 +125,9 @@ public class PlayerManager : MonoBehaviour
         // Reset player positions
         ResetPlayerPositions();
         
-        // Player 1 is active and controllable
-        if (player1 != null)
-            player1.SetActive(true);
-        
-        // Player 2 setup - now just deactivate it during Phase 1
-        if (player2 != null)
-            player2.SetActive(false);
+        // Player 1 is active and controllable, Player 2 is inactive and grayed
+        SetPlayerActive(player1?.gameObject, true);
+        SetPlayerActive(player2?.gameObject, false);
         
         // Start recording Player 1's movements
         if (player1Recorder != null)
@@ -125,21 +167,15 @@ public class PlayerManager : MonoBehaviour
         // Reset player positions
         ResetPlayerPositions();
         
-        // Player 2 is active and controllable
-        if (player2 != null)
-            player2.SetActive(true);
+        // Player 2 is active and controllable, Player 1 is inactive and grayed
+        SetPlayerActive(player2?.gameObject, true);
+        SetPlayerActive(player1?.gameObject, false);
         
-        // Player 1 setup - replay the recording we just made
-        if (player1 != null)
+        // Start replaying Player 1's movements from the phase we just completed
+        if (player1LastRecording != null && player1Replayer != null)
         {
-            player1.SetActive(false);
-            
-            // Start replaying Player 1's movements from the phase we just completed
-            if (player1LastRecording != null && player1Replayer != null)
-            {
-                Debug.Log("Starting Player 1 replay from Phase 1");
-                player1Replayer.StartReplay(player1LastRecording);
-            }
+            Debug.Log("Starting Player 1 replay from Phase 1");
+            player1Replayer.StartReplay(player1LastRecording);
         }
         
         // Debug information
@@ -389,27 +425,46 @@ public class PlayerManager : MonoBehaviour
             timerManager.StopTimer();
         }
         
-        // Deactivate players
-        if (player1 != null)
+        // Deactivate both players (they'll be grayed out)
+        SetPlayerActive(player1?.gameObject, false);
+        SetPlayerActive(player2?.gameObject, false);
+        
+        // Go directly to next level instead of showing UI
+        Debug.Log("Automatically transitioning to next level...");
+        
+        // Use LevelCompleteManager to handle next level logic
+        if (LevelCompleteManager.Instance != null)
         {
-            player1.SetActive(false);
+            // Short delay to let the victory feel satisfying, then go to next level
+            Invoke(nameof(TransitionToNextLevel), 1.5f);
         }
-        if (player2 != null)
+        else
         {
-            player2.SetActive(false);
+            Debug.LogWarning("No LevelCompleteManager found! Cannot transition to next level.");
         }
-        
-        // Trigger level completed event
-        GameEvents.TriggerLevelCompleted();
-        
-        // Here you could add level transition logic, scores, etc.
-        // For now, we'll just wait for manual restart or next level trigger
-        Debug.Log("Waiting for next level or restart...");
-        
-        // Example: Auto-transition to next level after delay
-        // Invoke(nameof(LoadNextLevel), 3f);
     }
     
+    private void TransitionToNextLevel()
+    {
+        if (LevelCompleteManager.Instance != null)
+        {
+            // Check if there's a next level configured
+            if (LevelCompleteManager.Instance.HasNextLevel())
+            {
+                Debug.Log("Going to next level...");
+                LevelCompleteManager.Instance.GoToNextLevel();
+            }
+            else
+            {
+                Debug.Log("No next level configured. Going to level select...");
+                LevelCompleteManager.Instance.GoToLevelSelect();
+            }
+        }
+        else
+        {
+            Debug.LogError("No LevelCompleteManager instance found!");
+        }
+    }
 
     
     // Event handler for Player 1 death in Phase 1
